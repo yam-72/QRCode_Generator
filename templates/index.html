@@ -14,10 +14,13 @@
 
   <body>
     <div class="container">
-      <h1>QR Code Generator</h1>
+      <!-- HEADER -->
+      <header>
+        <h1>QR Code Generator</h1>
+        <p>Create customized QR codes in seconds.</p>
+      </header>
 
-      <p>Create customized QR codes in seconds.</p>
-
+      <!-- QR GENERATOR FORM -->
       <form method="POST" enctype="multipart/form-data">
         <label for="url">Website URL</label>
 
@@ -30,9 +33,10 @@
           required
         />
 
+        <!-- COLOR OPTIONS -->
         <div class="color-options">
           <div class="color-input">
-            <label for="fill_color">QR Code Color</label>
+            <label for="fill_color"> QR Code Color </label>
 
             <input
               type="color"
@@ -43,7 +47,7 @@
           </div>
 
           <div class="color-input">
-            <label for="back_color">Background Color</label>
+            <label for="back_color"> Background Color </label>
 
             <input
               type="color"
@@ -54,8 +58,9 @@
           </div>
         </div>
 
+        <!-- LOGO UPLOAD -->
         <div class="logo-upload">
-          <label for="logo">Add Your Logo (Optional)</label>
+          <label for="logo"> Add Your Logo (Optional) </label>
 
           <input
             type="file"
@@ -64,40 +69,126 @@
             accept=".png,.jpg,.jpeg,.webp"
           />
 
-          <small>PNG, JPG or WEBP · Maximum 2 MB</small>
+          <small> PNG, JPG or WEBP · Maximum 2 MB </small>
         </div>
 
         <button type="submit">Generate QR Code</button>
       </form>
+
+      <!-- ERROR MESSAGE -->
+      {% if error %}
+
+      <p class="error">{{ error }}</p>
+
+      {% endif %}
+
+      <!-- GENERATED QR CODE -->
+      {% if qr_image %}
+
+      <section class="result">
+        <h2>Your QR Code</h2>
+
+        <img
+          src="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
+          alt="Generated QR Code"
+        />
+
+        <!-- DOWNLOAD OPTIONS -->
+        <div class="download-options">
+          <a
+            href="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
+            download="qrcode.png"
+          >
+            Download PNG
+          </a>
+
+          <a
+            href="{{ url_for('static', filename='qrcodes/' + svg_image) }}"
+            download="qrcode.svg"
+          >
+            Download SVG
+          </a>
+        </div>
+      </section>
+
+      {% endif %}
+
+      <!-- QR CODE HISTORY -->
+      <section class="history">
+        <div class="history-header">
+          <h2>QR Code History</h2>
+
+          {% if history %}
+
+          <form
+            action="{{ url_for('clear_history') }}"
+            method="POST"
+            onsubmit="return confirm('Delete all QR history?');"
+          >
+            <button type="submit" class="clear-btn">Clear All</button>
+          </form>
+
+          {% endif %}
+        </div>
+
+        <!-- HISTORY ITEMS -->
+        {% if history %}
+
+        <div class="history-list">
+          {% for item in history %}
+
+          <div class="history-card">
+            <img
+              src="{{ url_for('static', filename='qrcodes/' + item.png) }}"
+              alt="QR Code"
+              class="history-image"
+              loading="lazy"
+            />
+
+            <div class="history-info">
+              <p class="history-url">{{ item.url }}</p>
+
+              <small> {{ item.created_at }} </small>
+
+              <!-- HISTORY DOWNLOADS -->
+              <div class="history-actions">
+                <a
+                  href="{{ url_for('static', filename='qrcodes/' + item.png) }}"
+                  download="qrcode.png"
+                >
+                  PNG
+                </a>
+
+                <a
+                  href="{{ url_for('static', filename='qrcodes/' + item.svg) }}"
+                  download="qrcode.svg"
+                >
+                  SVG
+                </a>
+
+                <!-- DELETE INDIVIDUAL QR -->
+                <form
+                  action="{{ url_for('delete_history', entry_id=item.id) }}"
+                  method="POST"
+                  onsubmit="return confirm('Delete this QR code?');"
+                >
+                  <button type="submit" class="delete-btn">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {% endfor %}
+        </div>
+
+        {% else %}
+
+        <p class="empty-history">
+          No QR codes generated yet. Your generated QR codes will appear here.
+        </p>
+
+        {% endif %}
+      </section>
     </div>
   </body>
 </html>
-
-{% if qr_image %}
-
-<div class="result">
-  <h2>Your QR Code</h2>
-
-  <img
-    src="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
-    alt="Generated QR Code"
-  />
-
-  <div class="download-options">
-    <a
-      href="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
-      download="qrcode.png"
-    >
-      Download PNG
-    </a>
-
-    <a
-      href="{{ url_for('static', filename='qrcodes/' + svg_image) }}"
-      download="qrcode.svg"
-    >
-      Download SVG
-    </a>
-  </div>
-</div>
-
-{% endif %}

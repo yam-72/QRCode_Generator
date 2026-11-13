@@ -182,3 +182,123 @@ button:hover {
     opacity: 0.85;
 }
 
+/* QR CODE HISTORY */
+
+.history {
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 1px solid #475569;
+    text-align: left;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.history-header h2 {
+    color: #38bdf8;
+    font-size: 21px;
+}
+
+.clear-btn,
+.delete-btn {
+    width: auto;
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.clear-btn {
+    background: #475569;
+}
+
+.delete-btn {
+    background: #dc2626;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    min-width: 0;
+}
+
+.history-image {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    background: white;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.history-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-url {
+    color: white;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+    margin-bottom: 6px;
+}
+
+.history-info small {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.history-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.history-actions a {
+    color: #38bdf8;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.history-actions form {
+    display: inline;
+}
+
+.history-actions button {
+    margin: 0;
+}
+
+.empty-history {
+    color: #94a3b8;
+    font-size: 13px;
+    text-align: center;
+    padding: 20px 0;
+}
+
+@media (max-width: 480px) {
+    .history-card {
+        align-items: flex-start;
+    }
+
+    .history-image {
+        width: 60px;
+        height: 60px;
+    }
+}
+

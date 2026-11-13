@@ -10,5 +10,7 @@ venv/
 # IDE
 .vscode/
 
-# Generated QR codes
+# Generated QR codes and local history
 static/qrcodes/*.png
+static/qrcodes/*.svg
+static/qrcodes/history.json

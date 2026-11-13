@@ -16,15 +16,56 @@
     <div class="container">
       <h1>QR Code Generator</h1>
 
-      <p>Turn any website link into a QR code.</p>
+      <p>Create customized QR codes in seconds.</p>
 
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
+        <label for="url">Website URL</label>
+
         <input
           type="url"
+          id="url"
           name="url"
           placeholder="https://example.com"
+          value="{{ url }}"
           required
         />
+
+        <div class="color-options">
+          <div class="color-input">
+            <label for="fill_color">QR Code Color</label>
+
+            <input
+              type="color"
+              id="fill_color"
+              name="fill_color"
+              value="{{ fill_color }}"
+            />
+          </div>
+
+          <div class="color-input">
+            <label for="back_color">Background Color</label>
+
+            <input
+              type="color"
+              id="back_color"
+              name="back_color"
+              value="{{ back_color }}"
+            />
+          </div>
+        </div>
+
+        <div class="logo-upload">
+          <label for="logo">Add Your Logo (Optional)</label>
+
+          <input
+            type="file"
+            id="logo"
+            name="logo"
+            accept=".png,.jpg,.jpeg,.webp"
+          />
+
+          <small>PNG, JPG or WEBP · Maximum 2 MB</small>
+        </div>
 
         <button type="submit">Generate QR Code</button>
       </form>

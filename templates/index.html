@@ -69,28 +69,35 @@
 
         <button type="submit">Generate QR Code</button>
       </form>
-
-      {% if error %}
-      <p class="error">{{ error }}</p>
-      {% endif %} {% if qr_image %}
-
-      <div class="result">
-        <h2>Your QR Code</h2>
-
-        <img
-          src="{{ url_for('static', filename=qr_image.replace('static/', '')) }}"
-          alt="Generated QR Code"
-        />
-
-        <a
-          href="{{ url_for('static', filename=qr_image.replace('static/', '')) }}"
-          download="qrcode.png"
-        >
-          Download QR Code
-        </a>
-      </div>
-
-      {% endif %}
     </div>
   </body>
 </html>
+
+{% if qr_image %}
+
+<div class="result">
+  <h2>Your QR Code</h2>
+
+  <img
+    src="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
+    alt="Generated QR Code"
+  />
+
+  <div class="download-options">
+    <a
+      href="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
+      download="qrcode.png"
+    >
+      Download PNG
+    </a>
+
+    <a
+      href="{{ url_for('static', filename='qrcodes/' + svg_image) }}"
+      download="qrcode.svg"
+    >
+      Download SVG
+    </a>
+  </div>
+</div>
+
+{% endif %}

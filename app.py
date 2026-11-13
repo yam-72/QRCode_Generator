@@ -1,11 +1,11 @@
 
 from flask import Flask, render_template, request
 from PIL import Image
+from qrcode.image.svg import SvgPathImage
 import qrcode
 import os
 import uuid
 import re
-from io import BytesIO
 from urllib.parse import urlparse
 
 app = Flask(__name__)
@@ -23,8 +23,6 @@ def is_valid_color(color):
 
 
 def add_logo(qr_image, logo_file):
-    """Add a small, optimized logo to the center of a QR code."""
-
     if not logo_file or not logo_file.filename:
         return qr_image
 
@@ -35,11 +33,8 @@ def add_logo(qr_image, logo_file):
             raise ValueError("Use a PNG, JPG, or WEBP logo.")
 
         logo = logo.convert("RGBA")
-
-        # Resize logo while preserving its proportions.
         logo.thumbnail((qr_image.width // 5, qr_image.height // 5))
 
-        # Create a small white background behind the logo.
         padding = 8
 
         logo_background = Image.new(
@@ -48,10 +43,8 @@ def add_logo(qr_image, logo_file):
             "white"
         )
 
-        position = (padding, padding)
-        logo_background.alpha_composite(logo, position)
+        logo_background.alpha_composite(logo, (padding, padding))
 
-        # Center the logo.
         x = (qr_image.width - logo_background.width) // 2
         y = (qr_image.height - logo_background.height) // 2
 
@@ -67,6 +60,7 @@ def add_logo(qr_image, logo_file):
 @app.route("/", methods=["GET", "POST"])
 def index():
     qr_image = None
+    svg_image = None
     error = None
 
     url = ""
@@ -92,6 +86,11 @@ def index():
             error = "Please select valid colors."
 
         else:
+            filename = uuid.uuid4().hex
+
+            png_path = os.path.join(QR_FOLDER, f"{filename}.png")
+            svg_path = os.path.join(QR_FOLDER, f"{filename}.svg")
+
             try:
                 qr = qrcode.QRCode(
                     version=1,
@@ -103,19 +102,26 @@ def index():
                 qr.add_data(url)
                 qr.make(fit=True)
 
-                image = qr.make_image(
+                # Generate PNG
+                png = qr.make_image(
                     fill_color=fill_color,
                     back_color=back_color
                 ).convert("RGB")
 
-                image = add_logo(image, logo_file)
+                png = add_logo(png, logo_file)
+                png.save(png_path, format="PNG", optimize=True)
 
-                filename = f"{uuid.uuid4().hex}.png"
-                filepath = os.path.join(QR_FOLDER, filename)
+                # Generate scalable SVG
+                svg = qr.make_image(
+                    image_factory=SvgPathImage,
+                    fill_color=fill_color,
+                    back_color=back_color
+                )
 
-                image.save(filepath, format="PNG", optimize=True)
+                svg.save(svg_path)
 
-                qr_image = filepath
+                qr_image = f"{filename}.png"
+                svg_image = f"{filename}.svg"
 
             except (ValueError, OSError) as exception:
                 error = str(exception) or "Unable to generate QR code."
@@ -123,6 +129,7 @@ def index():
     return render_template(
         "index.html",
         qr_image=qr_image,
+        svg_image=svg_image,
         error=error,
         url=url,
         fill_color=fill_color,
@@ -135,6 +142,7 @@ def file_too_large(error):
     return render_template(
         "index.html",
         qr_image=None,
+        svg_image=None,
         error="Logo is too large. Maximum upload size is 2 MB.",
         url="",
         fill_color="#000000",

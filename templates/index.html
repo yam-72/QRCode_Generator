@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>QR Code Generator</title>
+
     <link
       rel="icon"
       type="image/png"
       href="{{ url_for('static', filename='favicon.png') }}"
     />
+
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -40,7 +42,7 @@
         <!-- COLOR OPTIONS -->
         <div class="color-options">
           <div class="color-input">
-            <label for="fill_color"> QR Code Color </label>
+            <label for="fill_color">QR Code Color</label>
 
             <input
               type="color"
@@ -51,7 +53,7 @@
           </div>
 
           <div class="color-input">
-            <label for="back_color"> Background Color </label>
+            <label for="back_color">Background Color</label>
 
             <input
               type="color"
@@ -64,7 +66,7 @@
 
         <!-- LOGO UPLOAD -->
         <div class="logo-upload">
-          <label for="logo"> Add Your Logo (Optional) </label>
+          <label for="logo">Add Your Logo (Optional)</label>
 
           <input
             type="file"
@@ -73,7 +75,7 @@
             accept=".png,.jpg,.jpeg,.webp"
           />
 
-          <small> PNG, JPG or WEBP · Maximum 2 MB </small>
+          <small>PNG, JPG or WEBP · Maximum 2 MB</small>
         </div>
 
         <button type="submit">Generate QR Code</button>
@@ -81,40 +83,31 @@
 
       <!-- ERROR MESSAGE -->
       {% if error %}
-
       <p class="error">{{ error }}</p>
-
       {% endif %}
 
       <!-- GENERATED QR CODE -->
       {% if qr_image %}
-
       <section class="result">
         <h2>Your QR Code</h2>
 
-        <img
-          src="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
-          alt="Generated QR Code"
-        />
+        <img src="{{ qr_image }}" alt="Generated QR Code" />
 
         <!-- DOWNLOAD OPTIONS -->
         <div class="download-options">
           <a
-            href="{{ url_for('static', filename='qrcodes/' + qr_image) }}"
-            download="qrcode.png"
+            href="{{ url_for('download_qr', entry_id=qr_id, file_type='png') }}"
           >
             Download PNG
           </a>
 
           <a
-            href="{{ url_for('static', filename='qrcodes/' + svg_image) }}"
-            download="qrcode.svg"
+            href="{{ url_for('download_qr', entry_id=qr_id, file_type='svg') }}"
           >
             Download SVG
           </a>
         </div>
       </section>
-
       {% endif %}
 
       <!-- QR CODE HISTORY -->
@@ -123,7 +116,6 @@
           <h2>QR Code History</h2>
 
           {% if history %}
-
           <form
             action="{{ url_for('clear_history') }}"
             method="POST"
@@ -131,19 +123,16 @@
           >
             <button type="submit" class="clear-btn">Clear All</button>
           </form>
-
           {% endif %}
         </div>
 
         <!-- HISTORY ITEMS -->
         {% if history %}
-
         <div class="history-list">
           {% for item in history %}
-
           <div class="history-card">
             <img
-              src="{{ url_for('static', filename='qrcodes/' + item.png) }}"
+              src="{{ item.png_url }}"
               alt="QR Code"
               class="history-image"
               loading="lazy"
@@ -152,20 +141,18 @@
             <div class="history-info">
               <p class="history-url">{{ item.url }}</p>
 
-              <small> {{ item.created_at }} </small>
+              <small>{{ item.created_at }}</small>
 
               <!-- HISTORY DOWNLOADS -->
               <div class="history-actions">
                 <a
-                  href="{{ url_for('static', filename='qrcodes/' + item.png) }}"
-                  download="qrcode.png"
+                  href="{{ url_for('download_qr', entry_id=item.id, file_type='png') }}"
                 >
                   PNG
                 </a>
 
                 <a
-                  href="{{ url_for('static', filename='qrcodes/' + item.svg) }}"
-                  download="qrcode.svg"
+                  href="{{ url_for('download_qr', entry_id=item.id, file_type='svg') }}"
                 >
                   SVG
                 </a>
@@ -181,16 +168,13 @@
               </div>
             </div>
           </div>
-
           {% endfor %}
         </div>
 
         {% else %}
-
         <p class="empty-history">
           No QR codes generated yet. Your generated QR codes will appear here.
         </p>
-
         {% endif %}
       </section>
     </div>
